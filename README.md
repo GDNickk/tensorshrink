@@ -256,8 +256,6 @@ Triton dequant-only kernel + cuBLAS GEMM instead of the fused
 dequant+GEMM kernel, which otherwise re-reads weights per row-tile at
 large M. Double-quant scale/gmin reconstruction is cached across calls.
 
-Speed numbers fluctuate ~5-10% run to run, treat single measurements as approximate.
-
 
 
 ## Project layout
@@ -273,7 +271,7 @@ Speed numbers fluctuate ~5-10% run to run, treat single measurements as approxim
 |`hf_integration.py`|`TensorShrinkConfig` - drop-in `quantization_config` for `transformers`|
 |`vq.py`|AVQ - vector-quantization codec|
 |`cli.py`|`python -m tensorshrink.cli quantize / inspect`|
-|`docs/companded-quantization-benchmark.md`|Full benchmark numbers and methodology|
+
 
 ## Status
 
