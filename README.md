@@ -1,18 +1,17 @@
 ﻿# tensorshrink
 
 Weight-only quantization for transformer and diffusion models. Shrinks
-VRAM/RAM footprint with minimal quality loss, no calibration data or
-activations required.
+VRAM/RAM footprint with minimal quality loss.
 
 ## Contents
 
 * [What it does](#what-it-does)
 * [How it works](#how-it-works)
 
-  * [GOAP](#goap--grouped-outlier-aware-packing-the-core-codec)
+  * [GOAP](#goap--grouped-outlier-aware-packing)
   * [Companded (Lloyd-Max) quantization](#companded-lloyd-max-quantization)
   * [Adaptive bit-width](#adaptive-bit-width)
-  * [AVQ](#avq--additive-vector-quantization-experimental)
+  * [AVQ](#avq--additive-vector-quantization)
 * [Install](#install)
 * [Quick start](#quick-start)
 * [Usage recipes](#usage-recipes)
@@ -43,7 +42,7 @@ and can stream layers on/off the GPU for models bigger than your VRAM
 
 ## How it works
 
-### GOAP — Grouped Outlier-Aware Packing (the core codec)
+### GOAP — Grouped Outlier-Aware Packing 
 
 Used by every quantized tensor:
 
@@ -87,7 +86,7 @@ small. Default is `adaptive=False` (forced 4-bit + double-quant), which
 gives the most predictable VRAM footprint. `vram_budget_mb` fits a
 bit-width mix across the whole model to a target size instead.
 
-### AVQ — Additive Vector Quantization (experimental)
+### AVQ — Additive Vector Quantization 
 
 `vq.py` is a second, independent codec: vector-quantizes small groups of
 weights (default 8 elements) against a k-means codebook, with a second
@@ -103,6 +102,7 @@ otherwise use GOAP.
 ## Install
 
 ```bash
+pip install git+https://github.com/GDNickk/tensorshrink.git
 pip install torch numpy zstandard
 ```
 
@@ -251,13 +251,12 @@ vs. bitsandbytes' ~0.06. Both produce coherent, usable generations.
 
 
 
-The UNet path routes large-batch layers (spatial attention) through a
+The UNet path routes large-batch layers through a
 Triton dequant-only kernel + cuBLAS GEMM instead of the fused
 dequant+GEMM kernel, which otherwise re-reads weights per row-tile at
 large M. Double-quant scale/gmin reconstruction is cached across calls.
 
-Speed numbers fluctuate ~5-10% run to run (Windows/WDDM scheduling) —
-treat single measurements as approximate.
+Speed numbers fluctuate ~5-10% run to run, treat single measurements as approximate.
 
 
 
